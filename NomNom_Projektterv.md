@@ -76,8 +76,8 @@ A projekt a következő emberekből áll:
 
 | Név               | Pozíció          | E-mail cím (stud-os)     |
 |-------------------|------------------|--------------------------|
-| Kiss Tamás Ferenc | Projektmenedzser | h049668@stud.u-szeged.hu |
-| Mester Dániel     | Projekt tag      | igen                     |
+| Kiss Tamás Ferenc | Projektmenedzser, fejlesztő | h049668@stud.u-szeged.hu |
+| Mester Dániel     | Fejlesztő      | igen                     |
 
 ## 5. A munka feltételei
 
@@ -136,6 +136,20 @@ hét feladatait. A megbeszélésről minden esetben memó készül.
 - Résztvevők: Kiss Tamás Ferenc, Mester Dániel
 - Érintett témák: Projekttéma kiválasztása, Isemrkedés a használni
   kívánt technológiákkal, projektterv elkészítése.
+
+2.  megbeszélés:
+
+- Időpont: 2025.10.20.
+- Hely: Discord
+- Résztvevők: Kiss Tamás Ferenc, Mester Dániel
+- Érintett témák: Az elkészített diagrammok átnézése és javítása
+
+3.  megbeszélés:
+
+- Időpont: 2025.12.05.
+- Hely: Discord
+- Résztvevők: Kiss Tamás Ferenc, Mester Dániel
+- Érintett témák: A protípus véglegesítése, eposzi küzdelem a git-el
 
 ### 6.3. Minőségbiztosítás
 
