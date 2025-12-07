@@ -26,7 +26,6 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
   bool _isDiscoverLoading = false;
   String? _discoverError;
   List<FeedPost> _discoverPosts = [];
-
   String? _currentUserAvatarUrl;
   bool _isLoadingCurrentUser = false;
 
@@ -52,14 +51,14 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
       if (!mounted) return;
 
       if (data is Map<String, dynamic>) {
-        String? _s(dynamic v) {
+        String? toS(dynamic v) {
           if (v == null) return null;
           final s = v.toString().trim();
           return s.isEmpty ? null : s;
         }
 
         setState(() {
-          _currentUserAvatarUrl = _s(
+          _currentUserAvatarUrl = toS(
             data['profilePictureUrl'] ??
                 data['profilePictureRef'] ??
                 data['profileImageUrl'] ??
@@ -74,7 +73,6 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
         });
       }
     } catch (e) {
-      print('loadCurrentUserProfile error: $e');
       if (!mounted) return;
       setState(() {
         _isLoadingCurrentUser = false;
@@ -97,7 +95,6 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
         _isDiscoverLoading = false;
       });
     } catch (e) {
-      print('loadDiscover error: $e');
       if (!mounted) return;
       setState(() {
         _discoverError = 'Could not load discover feed';
@@ -114,8 +111,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
     final cs = Theme.of(context).colorScheme;
 
     final username = currentUser?.username ?? '';
-    final initialLetter =
-        username.isNotEmpty ? username[0].toUpperCase() : '?';
+    final initialLetter = username.isNotEmpty ? username[0].toUpperCase() : '?';
 
     return Scaffold(
       appBar: AppBar(
@@ -182,9 +178,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
             if (_isDiscover) {
               await _loadDiscover();
             } else {
-              await ref
-                  .read(feedNotifierProvider.notifier)
-                  .loadFeed();
+              await ref.read(feedNotifierProvider.notifier).loadFeed();
             }
           }
         },
@@ -204,9 +198,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
                     onTap: () async {
                       if (_isDiscover) {
                         setState(() => _isDiscover = false);
-                        await ref
-                            .read(feedNotifierProvider.notifier)
-                            .loadFeed();
+                        await ref.read(feedNotifierProvider.notifier).loadFeed();
                       }
                     },
                   ),
@@ -233,9 +225,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
                 if (_isDiscover) {
                   await _loadDiscover();
                 } else {
-                  await ref
-                      .read(feedNotifierProvider.notifier)
-                      .loadFeed();
+                  await ref.read(feedNotifierProvider.notifier).loadFeed();
                 }
               },
               child: _isDiscover
@@ -264,9 +254,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
           const SizedBox(height: 12),
           ElevatedButton(
             onPressed: () async {
-              await ref
-                  .read(feedNotifierProvider.notifier)
-                  .loadFeed();
+              await ref.read(feedNotifierProvider.notifier).loadFeed();
             },
             child: const Text('Retry'),
           ),
@@ -384,8 +372,7 @@ class _TopToggleChip extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 160),
         curve: Curves.easeOut,
-        padding:
-            const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
         decoration: BoxDecoration(
           color: selected ? cs.primary : Colors.transparent,
           borderRadius: BorderRadius.circular(20),
@@ -400,8 +387,7 @@ class _TopToggleChip extends StatelessWidget {
             label,
             style: TextStyle(
               fontSize: 13,
-              fontWeight:
-                  selected ? FontWeight.w600 : FontWeight.w400,
+              fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
               color: selected ? cs.onPrimary : cs.onSurface,
             ),
           ),
@@ -442,16 +428,14 @@ class _FeedSkeletonList extends StatelessWidget {
                     const SizedBox(width: 12),
                     Expanded(
                       child: Column(
-                        crossAxisAlignment:
-                            CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Container(
                             height: 12,
                             width: 120,
                             decoration: BoxDecoration(
                               color: base,
-                              borderRadius:
-                                  BorderRadius.circular(8),
+                              borderRadius: BorderRadius.circular(8),
                             ),
                           ),
                           const SizedBox(height: 6),
@@ -460,8 +444,7 @@ class _FeedSkeletonList extends StatelessWidget {
                             width: 80,
                             decoration: BoxDecoration(
                               color: light,
-                              borderRadius:
-                                  BorderRadius.circular(8),
+                              borderRadius: BorderRadius.circular(8),
                             ),
                           ),
                         ],
@@ -481,8 +464,7 @@ class _FeedSkeletonList extends StatelessWidget {
                 const SizedBox(height: 8),
                 Container(
                   height: 14,
-                  width:
-                      MediaQuery.of(context).size.width * 0.6,
+                  width: MediaQuery.of(context).size.width * 0.6,
                   decoration: BoxDecoration(
                     color: light,
                     borderRadius: BorderRadius.circular(8),
@@ -560,10 +542,10 @@ class FeedPostCardForReuse extends ConsumerStatefulWidget {
       _FeedPostCardForReuseState();
 }
 
-class _FeedPostCardForReuseState
-    extends ConsumerState<FeedPostCardForReuse> {
+class _FeedPostCardForReuseState extends ConsumerState<FeedPostCardForReuse> {
   late int _commentCount;
   late int _likeCount;
+  bool _isLiked = false;
 
   @override
   void initState() {
@@ -616,6 +598,37 @@ class _FeedPostCardForReuseState
     );
   }
 
+  Future<void> _toggleLike() async {
+    setState(() {
+      if (_isLiked) {
+        _isLiked = false;
+        if (_likeCount > 0) {
+          _likeCount--;
+        }
+      } else {
+        _isLiked = true;
+        _likeCount++;
+      }
+    });
+
+    try {
+      await ref.read(feedNotifierProvider.notifier).toggleLike(widget.post);
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        if (_isLiked) {
+          _isLiked = false;
+          if (_likeCount > 0) {
+            _likeCount--;
+          }
+        } else {
+          _isLiked = true;
+          _likeCount++;
+        }
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authNotifierProvider);
@@ -652,12 +665,10 @@ class _FeedPostCardForReuseState
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content:
-                Text('Shared to group "${result.groupName}"'),
+            content: Text('Shared to group "${result.groupName}"'),
           ),
         );
       } catch (e) {
-        print('shareToGroup error: $e');
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -666,6 +677,10 @@ class _FeedPostCardForReuseState
         );
       }
     }
+
+    final isOwnPost = currentUserId != null &&
+        currentUserId.isNotEmpty &&
+        currentUserId == widget.post.authorId;
 
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 6),
@@ -679,8 +694,7 @@ class _FeedPostCardForReuseState
               children: [
                 GestureDetector(
                   onTap: () {
-                    if (currentUserId != null &&
-                        currentUserId == widget.post.authorId) {
+                    if (isOwnPost) {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (_) => const ProfileScreen(),
@@ -692,8 +706,7 @@ class _FeedPostCardForReuseState
                           builder: (_) => OtherUserProfileScreen(
                             userId: widget.post.authorId,
                             initialUsername: widget.post.authorName,
-                            initialAvatarUrl:
-                                widget.post.authorAvatar ?? '',
+                            initialAvatarUrl: widget.post.authorAvatar ?? '',
                           ),
                         ),
                       );
@@ -709,8 +722,7 @@ class _FeedPostCardForReuseState
                     child: (avatarUrl == null || avatarUrl.isEmpty)
                         ? Text(
                             widget.post.authorName.isNotEmpty
-                                ? widget.post.authorName[0]
-                                    .toUpperCase()
+                                ? widget.post.authorName[0].toUpperCase()
                                 : '?',
                           )
                         : null,
@@ -726,8 +738,7 @@ class _FeedPostCardForReuseState
                           Expanded(
                             child: Text(
                               widget.post.authorName,
-                              style:
-                                  textTheme.bodyMedium?.copyWith(
+                              style: textTheme.bodyMedium?.copyWith(
                                 fontWeight: FontWeight.w600,
                               ),
                               maxLines: 1,
@@ -744,9 +755,7 @@ class _FeedPostCardForReuseState
                         ],
                       ),
                       if (widget.post.groupName != null &&
-                          widget.post.groupName!
-                              .trim()
-                              .isNotEmpty)
+                          widget.post.groupName!.trim().isNotEmpty)
                         GestureDetector(
                           onTap: () {
                             final groupId = widget.post.groupId;
@@ -767,8 +776,7 @@ class _FeedPostCardForReuseState
                           },
                           child: Text(
                             'in ${widget.post.groupName}',
-                            style:
-                                textTheme.bodySmall?.copyWith(
+                            style: textTheme.bodySmall?.copyWith(
                               color: cs.primary,
                             ),
                           ),
@@ -786,19 +794,16 @@ class _FeedPostCardForReuseState
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (recipeName != null &&
-                        recipeName.isNotEmpty)
+                    if (recipeName != null && recipeName.isNotEmpty)
                       Text(
                         recipeName,
-                        style:
-                            textTheme.titleMedium?.copyWith(
+                        style: textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                     if (content.isNotEmpty)
                       Padding(
-                        padding:
-                            const EdgeInsets.only(top: 4.0),
+                        padding: const EdgeInsets.only(top: 4.0),
                         child: Text(
                           content,
                           style: textTheme.bodyMedium,
@@ -835,15 +840,11 @@ class _FeedPostCardForReuseState
             Row(
               children: [
                 IconButton(
-                  icon: const Icon(Icons.favorite_border),
-                  onPressed: () async {
-                    await ref
-                        .read(feedNotifierProvider.notifier)
-                        .toggleLike(widget.post);
-                    await ref
-                        .read(feedNotifierProvider.notifier)
-                        .loadFeed();
-                  },
+                  icon: Icon(
+                    _isLiked ? Icons.favorite : Icons.favorite_border,
+                    color: _isLiked ? cs.secondary : null,
+                  ),
+                  onPressed: _toggleLike,
                 ),
                 Text(_likeCount.toString()),
                 const SizedBox(width: 16),
@@ -902,8 +903,7 @@ class _ShareToGroupDialog extends ConsumerStatefulWidget {
       _ShareToGroupDialogState();
 }
 
-class _ShareToGroupDialogState
-    extends ConsumerState<_ShareToGroupDialog> {
+class _ShareToGroupDialogState extends ConsumerState<_ShareToGroupDialog> {
   bool _loading = true;
   String? _error;
   List<GroupSummary> _groups = [];
@@ -929,7 +929,6 @@ class _ShareToGroupDialogState
         _loading = false;
       });
     } catch (e) {
-      print('loadMyGroups error: $e');
       if (!mounted) return;
       setState(() {
         _error = 'Could not load your groups';
@@ -972,9 +971,8 @@ class _ShareToGroupDialogState
                           final g = _groups[index];
                           return ListTile(
                             title: Text(g.name),
-                            subtitle: g.description != null
-                                ? Text(g.description!)
-                                : null,
+                            subtitle:
+                                g.description != null ? Text(g.description!) : null,
                             onTap: () {
                               Navigator.of(context).pop(
                                 _ShareTarget(
@@ -989,8 +987,7 @@ class _ShareToGroupDialogState
                     ),
       actions: [
         TextButton(
-          onPressed: () =>
-              Navigator.of(context).maybePop(),
+          onPressed: () => Navigator.of(context).maybePop(),
           child: const Text('Cancel'),
         ),
       ],
@@ -1028,9 +1025,9 @@ class _FeedComment {
       authorName: authorName,
       authorAvatar: avatar,
       content: json['content'] as String? ?? '',
-      createdAt: DateTime.tryParse(
-              json['createdAt']?.toString() ?? '') ??
-          DateTime.now(),
+      createdAt:
+          DateTime.tryParse(json['createdAt']?.toString() ?? '') ??
+              DateTime.now(),
     );
   }
 }
@@ -1045,14 +1042,11 @@ class _CommentSheet extends ConsumerStatefulWidget {
   final VoidCallback onCommentAdded;
 
   @override
-  ConsumerState<_CommentSheet> createState() =>
-      _CommentSheetState();
+  ConsumerState<_CommentSheet> createState() => _CommentSheetState();
 }
 
-class _CommentSheetState
-    extends ConsumerState<_CommentSheet> {
-  final TextEditingController _controller =
-      TextEditingController();
+class _CommentSheetState extends ConsumerState<_CommentSheet> {
+  final TextEditingController _controller = TextEditingController();
   bool _isLoading = true;
   bool _isSending = false;
   String? _error;
@@ -1078,14 +1072,12 @@ class _CommentSheetState
 
     try {
       final dio = ref.read(authedDioProvider);
-      final res =
-          await dio.get('/posts/${widget.postId}/comments');
+      final res = await dio.get('/posts/${widget.postId}/comments');
       final data = res.data;
 
       final list = data is List
           ? data
-          : (data['comments'] as List<dynamic>? ??
-              const []);
+          : (data['comments'] as List<dynamic>? ?? const []);
 
       final comments = list
           .whereType<Map<String, dynamic>>()
@@ -1098,7 +1090,6 @@ class _CommentSheetState
         _isLoading = false;
       });
     } catch (e) {
-      print('loadComments error: $e');
       if (!mounted) return;
       setState(() {
         _error = 'Could not load comments';
@@ -1132,7 +1123,6 @@ class _CommentSheetState
         _isSending = false;
       });
     } catch (e) {
-      print('sendComment error: $e');
       if (!mounted) return;
       setState(() {
         _isSending = false;
@@ -1153,8 +1143,7 @@ class _CommentSheetState
     return SafeArea(
       child: Padding(
         padding: EdgeInsets.only(
-          bottom:
-              MediaQuery.of(context).viewInsets.bottom,
+          bottom: MediaQuery.of(context).viewInsets.bottom,
         ),
         child: DraggableScrollableSheet(
           expand: false,
@@ -1177,8 +1166,7 @@ class _CommentSheetState
                     height: 4,
                     decoration: BoxDecoration(
                       color: cs.outline.withOpacity(0.5),
-                      borderRadius:
-                          BorderRadius.circular(999),
+                      borderRadius: BorderRadius.circular(999),
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -1190,16 +1178,14 @@ class _CommentSheetState
                   Expanded(
                     child: _isLoading
                         ? const Center(
-                            child:
-                                CircularProgressIndicator(),
+                            child: CircularProgressIndicator(),
                           )
                         : _error != null
                             ? Center(
                                 child: Text(
                                   _error!,
-                                  style: const TextStyle(
-                                    color: Colors.red,
-                                  ),
+                                  style:
+                                      const TextStyle(color: Colors.red),
                                 ),
                               )
                             : _comments.isEmpty
@@ -1209,21 +1195,15 @@ class _CommentSheetState
                                     ),
                                   )
                                 : ListView.builder(
-                                    controller:
-                                        scrollController,
-                                    itemCount:
-                                        _comments.length,
-                                    itemBuilder:
-                                        (context, index) {
-                                      final c =
-                                          _comments[index];
+                                    controller: scrollController,
+                                    itemCount: _comments.length,
+                                    itemBuilder: (context, index) {
+                                      final c = _comments[index];
                                       return ListTile(
-                                        leading:
-                                            CircleAvatar(
+                                        leading: CircleAvatar(
                                           backgroundColor:
                                               cs.surfaceVariant,
-                                          backgroundImage: (c
-                                                          .authorAvatar !=
+                                          backgroundImage: (c.authorAvatar !=
                                                       null &&
                                                   c.authorAvatar!
                                                       .isNotEmpty)
@@ -1233,13 +1213,10 @@ class _CommentSheetState
                                               : null,
                                           child: (c.authorAvatar ==
                                                       null ||
-                                                  c.authorAvatar!
-                                                      .isEmpty)
+                                                  c.authorAvatar!.isEmpty)
                                               ? Text(
-                                                  c.authorName
-                                                          .isNotEmpty
-                                                      ? c.authorName[
-                                                              0]
+                                                  c.authorName.isNotEmpty
+                                                      ? c.authorName[0]
                                                           .toUpperCase()
                                                       : '?',
                                                 )
@@ -1247,12 +1224,10 @@ class _CommentSheetState
                                         ),
                                         title: Text(
                                           c.authorName,
-                                          style: textTheme
-                                              .bodyMedium
+                                          style: textTheme.bodyMedium
                                               ?.copyWith(
                                             fontWeight:
-                                                FontWeight
-                                                    .w600,
+                                                FontWeight.w600,
                                           ),
                                         ),
                                         subtitle: Column(
@@ -1261,13 +1236,10 @@ class _CommentSheetState
                                                   .start,
                                           children: [
                                             Text(c.content),
-                                            const SizedBox(
-                                                height: 4),
+                                            const SizedBox(height: 4),
                                             Text(
-                                              _formatTime(
-                                                  c.createdAt),
-                                              style: textTheme
-                                                  .bodySmall
+                                              _formatTime(c.createdAt),
+                                              style: textTheme.bodySmall
                                                   ?.copyWith(
                                                 color: cs
                                                     .onSurfaceVariant,
@@ -1281,8 +1253,7 @@ class _CommentSheetState
                   ),
                   const Divider(height: 1),
                   Padding(
-                    padding:
-                        const EdgeInsets.symmetric(
+                    padding: const EdgeInsets.symmetric(
                       horizontal: 12,
                       vertical: 8,
                     ),
@@ -1291,10 +1262,8 @@ class _CommentSheetState
                         Expanded(
                           child: TextField(
                             controller: _controller,
-                            decoration:
-                                const InputDecoration(
-                              hintText:
-                                  'Add a comment...',
+                            decoration: const InputDecoration(
+                              hintText: 'Add a comment...',
                               border: OutlineInputBorder(),
                               isDense: true,
                             ),
@@ -1308,15 +1277,12 @@ class _CommentSheetState
                               ? const SizedBox(
                                   width: 18,
                                   height: 18,
-                                  child:
-                                      CircularProgressIndicator(
+                                  child: CircularProgressIndicator(
                                     strokeWidth: 2,
                                   ),
                                 )
                               : const Icon(Icons.send),
-                          onPressed: _isSending
-                              ? null
-                              : _sendComment,
+                          onPressed: _isSending ? null : _sendComment,
                         ),
                       ],
                     ),
