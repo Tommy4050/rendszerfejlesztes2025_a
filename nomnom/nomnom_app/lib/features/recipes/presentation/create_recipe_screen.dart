@@ -326,18 +326,41 @@ class _CreateRecipeScreenState extends ConsumerState<CreateRecipeScreen> {
                           Expanded(
                             child: TextField(
                               controller: row.nameController,
-                              decoration: const InputDecoration(
-                                labelText: 'Name',
+                              style: TextStyle(
+                                color: theme.colorScheme.onSurface,
                               ),
-                              onChanged: (value) =>
-                                  _onIngredientNameChanged(index, value),
+                              cursorColor: theme.colorScheme.primary,
+                              decoration: InputDecoration(
+                                labelText: 'Name',
+                                labelStyle: TextStyle(
+                                  color: theme.colorScheme.onSurface.withOpacity(0.8),
+                                ),
+                                filled: true,
+                                fillColor: theme.colorScheme.surfaceVariant,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: BorderSide(
+                                    color: theme.colorScheme.outline.withOpacity(0.5),
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: BorderSide(
+                                    color: theme.colorScheme.primary,
+                                    width: 1.5,
+                                  ),
+                                ),
+                              ),
+                              onChanged: (value) => _onIngredientNameChanged(index, value),
                             ),
                           ),
                           IconButton(
                             icon: const Icon(Icons.remove_circle_outline),
                             tooltip: 'Remove ingredient',
-                            onPressed: () =>
-                                _removeIngredientRow(index),
+                            onPressed: () => _removeIngredientRow(index),
                           ),
                         ],
                       ),
@@ -348,12 +371,37 @@ class _CreateRecipeScreenState extends ConsumerState<CreateRecipeScreen> {
                             flex: 2,
                             child: TextField(
                               controller: row.quantityController,
-                              decoration: const InputDecoration(
-                                labelText: 'Qty',
+                              style: TextStyle(
+                                color: theme.colorScheme.onSurface,
                               ),
-                              keyboardType:
-                                  const TextInputType.numberWithOptions(
-                                      decimal: true),
+                              cursorColor: theme.colorScheme.primary,
+                              decoration: InputDecoration(
+                                labelText: 'Qty',
+                                labelStyle: TextStyle(
+                                  color: theme.colorScheme.onSurface.withOpacity(0.8),
+                                ),
+                                filled: true,
+                                fillColor: theme.colorScheme.surfaceVariant,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: BorderSide(
+                                    color: theme.colorScheme.outline.withOpacity(0.5),
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: BorderSide(
+                                    color: theme.colorScheme.primary,
+                                    width: 1.5,
+                                  ),
+                                ),
+                              ),
+                              keyboardType: const TextInputType.numberWithOptions(
+                                decimal: true,
+                              ),
                             ),
                           ),
                           const SizedBox(width: 8),
@@ -363,8 +411,32 @@ class _CreateRecipeScreenState extends ConsumerState<CreateRecipeScreen> {
                               value: row.unitController.text.isEmpty
                                   ? null
                                   : row.unitController.text,
-                              decoration: const InputDecoration(
+                              decoration: InputDecoration(
                                 labelText: 'Unit',
+                                labelStyle: TextStyle(
+                                  color: theme.colorScheme.onSurface.withOpacity(0.8),
+                                ),
+                                filled: true,
+                                fillColor: theme.colorScheme.surfaceVariant,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: BorderSide(
+                                    color: theme.colorScheme.outline.withOpacity(0.5),
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: BorderSide(
+                                    color: theme.colorScheme.primary,
+                                    width: 1.5,
+                                  ),
+                                ),
+                              ),
+                              style: TextStyle(
+                                color: theme.colorScheme.onSurface,
                               ),
                               items: const [
                                 'g',
@@ -390,7 +462,6 @@ class _CreateRecipeScreenState extends ConsumerState<CreateRecipeScreen> {
                           ),
                         ],
                       ),
-
                       if (row.isSearching)
                         const Padding(
                           padding: EdgeInsets.only(top: 4),
@@ -404,20 +475,18 @@ class _CreateRecipeScreenState extends ConsumerState<CreateRecipeScreen> {
                           padding: const EdgeInsets.only(top: 4),
                           child: Text(
                             row.searchError!,
-                            style:
-                                const TextStyle(color: Colors.redAccent),
+                            style: const TextStyle(color: Colors.redAccent),
                           ),
                         ),
-
                       if (row.suggestions.isNotEmpty)
                         Container(
                           margin: const EdgeInsets.only(top: 4),
                           decoration: BoxDecoration(
                             border: Border.all(
-                              color: Colors.grey.shade300,
+                              color: theme.colorScheme.outline.withOpacity(0.5),
                             ),
                             borderRadius: BorderRadius.circular(8),
-                            color: Colors.grey.shade50,
+                            color: theme.colorScheme.surfaceVariant,
                           ),
                           constraints: const BoxConstraints(
                             maxHeight: 200,
@@ -429,9 +498,19 @@ class _CreateRecipeScreenState extends ConsumerState<CreateRecipeScreen> {
                               final s = row.suggestions[i];
                               return ListTile(
                                 dense: true,
-                                title: Text(s.name),
+                                title: Text(
+                                  s.name,
+                                  style: TextStyle(
+                                    color: theme.colorScheme.onSurface,
+                                  ),
+                                ),
                                 subtitle: s.brand.isNotEmpty
-                                    ? Text(s.brand)
+                                    ? Text(
+                                        s.brand,
+                                        style: TextStyle(
+                                          color: theme.colorScheme.onSurface.withOpacity(0.7),
+                                        ),
+                                      )
                                     : null,
                                 onTap: () {
                                   setState(() {
@@ -447,9 +526,7 @@ class _CreateRecipeScreenState extends ConsumerState<CreateRecipeScreen> {
                             },
                           ),
                         ),
-
-                      if (row.barcode != null &&
-                          row.barcode!.isNotEmpty)
+                      if (row.barcode != null && row.barcode!.isNotEmpty)
                         Padding(
                           padding: const EdgeInsets.only(top: 4),
                           child: Text(
@@ -460,6 +537,7 @@ class _CreateRecipeScreenState extends ConsumerState<CreateRecipeScreen> {
                     ],
                   ),
                 );
+
               }),
               Align(
                 alignment: Alignment.centerLeft,
