@@ -12,6 +12,7 @@ import friendRoutes from "./routes/friendRoutes.js";
 import postRoutes from "./routes/postRoutes.js";
 import uploadRoutes from "./routes/uploadRoutes.js";
 import ingredientRoutes from "./routes/ingredientRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
 
 dotenv.config();
 
@@ -20,12 +21,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Health check
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok", service: "nomnom-backend" });
 });
 
-// Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/recipes", recipeRoutes);
 app.use("/api/feed", feedRoutes);
@@ -34,6 +33,7 @@ app.use("/api/friends", friendRoutes);
 app.use("/api/posts", postRoutes);
 app.use("/api/uploads", uploadRoutes);
 app.use("/api/ingredients", ingredientRoutes);
+app.use("/api/users", userRoutes);
 
 const PORT = process.env.PORT || 5000;
 

@@ -28,7 +28,7 @@ const recipeIngredientSchema = new Schema(
   {
     ingredient: {
       type: Schema.Types.ObjectId,
-      ref: "Ingredient", // optional nice to have
+      ref: "Ingredient",
     },
 
     name: {
@@ -47,13 +47,11 @@ const recipeIngredientSchema = new Schema(
       required: true, // "g", "ml", "pcs", etc.
     },
 
-    // nutrients for THIS quantity of this ingredient
     derivedNutrients: {
       type: nutrientsSchema,
       default: () => ({}),
     },
 
-    // optional: barcode sent from client when creating
     externalId: {
       type: String,
     },

@@ -1,4 +1,3 @@
-// routes/uploadRoutes.js
 import { Router } from "express";
 import { protect } from "../middleware/authMiddleware.js";
 import { upload } from "../middleware/uploadMiddleware.js";

@@ -11,7 +11,6 @@ const emptyNutrients = () => ({
   fiber: 0,
 });
 
-// Fetch product nutriments from OpenFoodFacts via barcode
 const fetchOpenFoodFactsNutrients = async (barcode) => {
   const url = `${OPEN_FOOD_FACTS_API}/product/${barcode}.json`;
   const resp = await axios.get(url);
@@ -31,7 +30,6 @@ const fetchOpenFoodFactsNutrients = async (barcode) => {
   };
 };
 
-// Find or create Ingredient in DB based on barcode
 const getOrCreateIngredientByBarcode = async ({ name, barcode }) => {
   if (!barcode) return null;
 
@@ -45,7 +43,7 @@ const getOrCreateIngredientByBarcode = async ({ name, barcode }) => {
       externalId: barcode,
       source: "openfoodfacts",
       baseUnit: "g",
-      baseAmount: 100, // OFF per 100 g
+      baseAmount: 100,
       nutrientsPerBase,
     });
   }
@@ -53,7 +51,6 @@ const getOrCreateIngredientByBarcode = async ({ name, barcode }) => {
   return ingredient;
 };
 
-// Scale nutrients from baseAmount to the requested quantity
 const scaleNutrients = (nutrients, factor) => ({
   calories: (nutrients.calories || 0) * factor,
   protein: (nutrients.protein || 0) * factor,
@@ -62,8 +59,6 @@ const scaleNutrients = (nutrients, factor) => ({
   fiber: (nutrients.fiber || 0) * factor,
 });
 
-// Entry point for the controller
-// rawIngredients: [{ name, quantity, unit, barcode? }, ...]
 export const buildRecipeIngredientsWithNutrition = async (rawIngredients) => {
   if (!Array.isArray(rawIngredients) || rawIngredients.length === 0) {
     return {
@@ -79,7 +74,6 @@ export const buildRecipeIngredientsWithNutrition = async (rawIngredients) => {
     const { name, quantity, unit, barcode } = raw;
 
     if (!name || !quantity || !unit) {
-      // skip invalid lines
       continue;
     }
 
@@ -88,7 +82,6 @@ export const buildRecipeIngredientsWithNutrition = async (rawIngredients) => {
     let baseAmount = 100;
 
     try {
-      // If barcode given -> use OFF + Ingredient collection
       if (barcode) {
         ingredientDoc = await getOrCreateIngredientByBarcode({
           name,
@@ -107,11 +100,9 @@ export const buildRecipeIngredientsWithNutrition = async (rawIngredients) => {
       );
     }
 
-    // We assume unit is compatible with baseUnit (e.g. grams)
     const factor = quantity / baseAmount;
     const derived = scaleNutrients(baseNutrients, factor);
 
-    // Sum into total
     total = {
       calories: total.calories + derived.calories,
       protein: total.protein + derived.protein,

@@ -1,4 +1,3 @@
-// routes/friendRoutes.js
 import { Router } from "express";
 import { followUser, unfollowUser, listFollowing, listFollowers } from "../controllers/friendController.js";
 import { protect } from "../middleware/authMiddleware.js";

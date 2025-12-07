@@ -10,7 +10,6 @@ dotenv.config({
   path: path.join(__dirname, "..", ".env"),
 });
 
-// Debug logs – check once, then you can delete these lines
 console.log("[Cloudinary] CLOUDINARY_CLOUD_NAME =", process.env.CLOUDINARY_CLOUD_NAME);
 console.log("[Cloudinary] has API_KEY   =", !!process.env.CLOUDINARY_API_KEY);
 console.log("[Cloudinary] has API_SECRET =", !!process.env.CLOUDINARY_API_SECRET);

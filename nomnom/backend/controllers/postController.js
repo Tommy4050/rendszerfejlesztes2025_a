@@ -1,4 +1,3 @@
-// controllers/postController.js
 import Post from "../models/Post.js";
 import PostLike from "../models/PostLike.js";
 import Comment from "../models/Comment.js";
@@ -13,11 +12,9 @@ export const likePost = async (req, res) => {
       return res.status(404).json({ message: "Post not found" });
     }
 
-    // upsert like
     const existingLike = await PostLike.findOne({ post: postId, user: userId });
 
     if (existingLike) {
-      // already liked, do nothing
       return res.json({ message: "Post already liked" });
     }
 

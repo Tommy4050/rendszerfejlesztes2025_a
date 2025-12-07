@@ -6,11 +6,9 @@ export const getFeed = async (req, res) => {
   try {
     const userId = req.user.userId;
 
-    // who I follow
     const follows = await Friend.find({ user: userId }).select("friend");
     const followingIds = follows.map((f) => f.friend.toString());
 
-    // groups I'm in
     const memberships = await GroupMember.find({ user: userId }).select(
       "group"
     );

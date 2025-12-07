@@ -10,7 +10,7 @@ export const createRecipe = async (req, res) => {
       description,
       images = [],
       cookTimeMin,
-      ingredients = [], // [{ name, quantity, unit, barcode? }, ...]
+      ingredients = [],
       steps = [],
       dietaryInfo,
     } = req.body;
@@ -21,7 +21,6 @@ export const createRecipe = async (req, res) => {
         .json({ message: "name and description are required" });
     }
 
-    // Build recipeIngredients + totalNutrients using OpenFoodFacts (if barcode present)
     const { recipeIngredients, totalNutrients } =
       await buildRecipeIngredientsWithNutrition(ingredients);
 
@@ -37,7 +36,6 @@ export const createRecipe = async (req, res) => {
       createdBy: userId,
     });
 
-    // Auto-create a post for the recipe
     const post = await Post.create({
       author: userId,
       recipe: recipe._id,
@@ -95,5 +93,20 @@ export const getMyRecipes = async (req, res) => {
   } catch (err) {
     console.error("getMyRecipes error:", err);
     res.status(500).json({ message: "Server error fetching recipes" });
+  }
+};
+
+export const getUserRecipes = async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const recipes = await Recipe.find({ createdBy: userId })
+      .sort({ createdAt: -1 })
+      .select("name cookTimeMin images createdAt");
+
+    res.json({ recipes });
+  } catch (err) {
+    console.error("getUserRecipes error:", err.message);
+    res.status(500).json({ message: "Failed to load user recipes" });
   }
 };
