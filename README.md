@@ -39,7 +39,6 @@ xcodebuild -version
 
 ## Projekt struktúra
 
-A repo felépítése eltérhet, de jellemzően:
 - `backend/` – Node.js/Express API
 - `nomnom_app/` – Flutter app
 
