@@ -5,6 +5,20 @@ A projekt Cloudinary-t használ képfeltöltéshez, MongoDB-t adatbázisként, J
 
 ---
 
+## 📱 Screenshots
+
+<p align="center">
+  <img src="docs/feed.png" width="350">
+</p>
+
+<p align="center">
+  <img src="docs/login.png" width="220">
+  <img src="docs/profile.png" width="220">
+  <img src="docs/groups.png" width="220">
+</p>
+
+---
+
 ## Tech stack
 
 - **Frontend:** Flutter
