@@ -5,7 +5,7 @@ A projekt Cloudinary-t használ képfeltöltéshez, MongoDB-t adatbázisként, J
 
 ---
 
-## 📱 Screenshots
+## Screenshots
 
 <p align="center">
   <img src="docs/feed.png" width="350">
